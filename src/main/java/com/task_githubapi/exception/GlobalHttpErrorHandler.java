@@ -25,4 +25,6 @@ public class GlobalHttpErrorHandler extends ResponseEntityExceptionHandler {
     private void logException(Exception exception) {
         logger.error("Exception occurred: ", exception);
     }
+
+
 }
