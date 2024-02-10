@@ -12,13 +12,17 @@ public class GlobalHttpErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ExceptionMessageDTO> handleUserNotFoundException(UserNotFoundException exception) {
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        return ResponseEntity.status(status).body(new ExceptionMessageDTO(status.value(), exception.getMessage()));
+        logException(exception);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionMessageDTO(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
     }
 
     @ExceptionHandler(GitHubApiException.class)
     public ResponseEntity<ExceptionMessageDTO> handleGitHubApiException(GitHubApiException exception) {
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        return ResponseEntity.status(status).body(new ExceptionMessageDTO(status.value(), exception.getMessage()));
+        logException(exception);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionMessageDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage()));
+    }
+
+    private void logException(Exception exception) {
+        logger.error("Exception occurred: ", exception);
     }
 }

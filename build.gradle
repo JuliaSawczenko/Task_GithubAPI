@@ -25,6 +25,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+	implementation 'org.aspectj:aspectjweaver:1.9.21'
+
 
 	compileOnly 'org.projectlombok:lombok'
 

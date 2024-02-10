@@ -9,18 +9,13 @@ import com.task_githubapi.mapper.RepositoryMapper;
 import com.task_githubapi.model.BranchModel;
 import com.task_githubapi.model.RepositoryModel;
 import org.mapstruct.factory.Mappers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +26,6 @@ public class GitHubRepoService {
     private final GitHubBranchService gitHubBranchService;
     private final BranchMapper branchMapper = Mappers.getMapper(BranchMapper.class);
     private final RepositoryMapper repositoryMapper = Mappers.getMapper(RepositoryMapper.class);
-    private static final Logger logger = LoggerFactory.getLogger(GitHubRepoService.class);
 
 
     public GitHubRepoService(RestTemplate restTemplate, GitHubUserService gitHubUserService, GitHubBranchService gitHubBranchService) {
@@ -40,21 +34,21 @@ public class GitHubRepoService {
         this.gitHubBranchService = gitHubBranchService;
     }
 
-    public List<RepositoryModel> fetchUserRepositories(final String username) throws UserNotFoundException, GitHubApiException {
-        logger.info("Fetching repositories for user: {}", username);
+    public List<RepositoryModel> fetchUserRepositories(final String username) throws UserNotFoundException {
         gitHubUserService.getUserByUsername(username);
         String url = buildReposUrl(username);
         ResponseEntity<RepositoryModel[]> response = restTemplate.getForEntity(url, RepositoryModel[].class);
 
-        List<RepositoryModel> repositories = Arrays.stream(Objects.requireNonNull(response.getBody()))
+        if (response.getBody() == null) {
+            return Collections.emptyList();
+        }
+
+        return Arrays.stream(response.getBody())
                 .filter(repo -> !repo.isFork())
                 .collect(Collectors.toList());
-        logger.info("Found {} repositories for user: {}", repositories.size(), username);
-        return repositories;
     }
 
     public List<RepositoryDTO> assembleRepositoriesWithBranches(final String username) throws UserNotFoundException, GitHubApiException {
-        logger.info("Assembling repositories with branches for user: {}", username);
         List<RepositoryModel> repos = fetchUserRepositories(username);
 
         return repos.stream()
