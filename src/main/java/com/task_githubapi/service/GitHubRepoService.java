@@ -35,7 +35,8 @@ public class GitHubRepoService {
     }
 
     public List<RepositoryModel> fetchUserRepositories(final String username) throws UserNotFoundException, GitHubApiException {
-        gitHubUserService.getUserByUsername(username);
+        gitHubUserService.getUserByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+
         String url = buildReposUrl(username);
         ResponseEntity<RepositoryModel[]> response = restTemplate.getForEntity(url, RepositoryModel[].class);
 

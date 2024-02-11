@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class GitHubControllerIntegrationTest {
+class GitHubControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -31,6 +31,7 @@ public class GitHubControllerIntegrationTest {
                 .andExpect(jsonPath("$[0].ownerLogin", is(username)))
                 .andExpect(jsonPath("$[*].branches[?(@.name)].name", everyItem(not(emptyOrNullString()))))
                 .andExpect(jsonPath("$[*].branches[*].lastCommit", everyItem(not(emptyOrNullString()))))
+
                 //Specific checks for JuliaSawczenko user - modify when changing the user
                 .andExpect(jsonPath("$[?(@.name == 'Amazing-Numbers')].branches[0].name", contains("main")))
                 .andExpect(jsonPath("$[?(@.name == 'Amazing-Numbers')].branches[0].lastCommit", contains("1a7335a9aab579bf4df955025852953dd2e348b2")));

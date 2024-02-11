@@ -7,6 +7,7 @@ import com.task_githubapi.mocks.BranchModelMock;
 import com.task_githubapi.mocks.RepositoryModelMock;
 import com.task_githubapi.model.BranchModel;
 import com.task_githubapi.model.RepositoryModel;
+import com.task_githubapi.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.task_githubapi.mocks.MockedValues.REPO_NAME;
 import static com.task_githubapi.mocks.MockedValues.USERNAME;
@@ -27,7 +29,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class GitHubRepoServiceTest {
+class GitHubRepoServiceTest {
 
     @Mock
     private RestTemplate restTemplate;
@@ -49,6 +51,8 @@ public class GitHubRepoServiceTest {
         RepositoryModel nonForkedRepoModel = RepositoryModelMock.getRepositoryModel(false);
         RepositoryModel[] repositoryModels = {forkedRepoModel, nonForkedRepoModel};
 
+        when(gitHubUserService.getUserByUsername(USERNAME)).thenReturn(Optional.of(new User(USERNAME)));
+
         when(restTemplate.getForEntity(anyString(), eq(RepositoryModel[].class)))
                 .thenReturn(new ResponseEntity<>(repositoryModels, HttpStatus.OK));
 
@@ -56,8 +60,8 @@ public class GitHubRepoServiceTest {
         List<RepositoryModel> result = gitHubRepoService.fetchUserRepositories(USERNAME);
 
         // Then
-        assertEquals(1, result.size(), "Should only return one non-forked repository");
-        assertFalse(result.get(0).isFork(), "The returned repository should not be a fork");
+        assertEquals(1, result.size());
+        assertFalse(result.get(0).isFork());
         verify(gitHubUserService).getUserByUsername(USERNAME);
         verify(restTemplate).getForEntity(eq(gitHubRepoService.buildReposUrl(USERNAME)), eq(RepositoryModel[].class));
 
@@ -65,18 +69,23 @@ public class GitHubRepoServiceTest {
 
     @Test
     void whenFetchUserRepositories_givenNonExistentUser_thenThrowUserNotFoundException() throws UserNotFoundException, GitHubApiException {
+        // Given & When
         doThrow(UserNotFoundException.class).when(gitHubUserService).getUserByUsername(anyString());
 
+        // Then
         assertThrows(UserNotFoundException.class, () -> gitHubRepoService.fetchUserRepositories(USERNAME));
     }
 
     @Test
     void whenFetchUserRepositories_givenUserWithNoRepositories_thenReturnEmptyList() throws UserNotFoundException, GitHubApiException {
+        // Given & When
         when(restTemplate.getForEntity(anyString(), eq(RepositoryModel[].class)))
                 .thenReturn(new ResponseEntity<>(new RepositoryModel[0], HttpStatus.OK));
+        when(gitHubUserService.getUserByUsername(USERNAME)).thenReturn(Optional.of(new User(USERNAME)));
 
         List<RepositoryModel> result = gitHubRepoService.fetchUserRepositories(USERNAME);
 
+        // Then
         assertTrue(result.isEmpty());
     }
 
@@ -89,6 +98,7 @@ public class GitHubRepoServiceTest {
         when(gitHubBranchService.fetchRepositoryBranches(USERNAME, REPO_NAME)).thenReturn(Collections.singletonList(branchModel));
         when(restTemplate.getForEntity(anyString(), eq(RepositoryModel[].class)))
                 .thenReturn(new ResponseEntity<>(new RepositoryModel[]{repoModel}, HttpStatus.OK));
+        when(gitHubUserService.getUserByUsername(USERNAME)).thenReturn(Optional.of(new User(USERNAME)));
 
         // When
         List<RepositoryDTO> result = gitHubRepoService.assembleRepositoriesWithBranches(USERNAME);
@@ -102,16 +112,16 @@ public class GitHubRepoServiceTest {
     @Test
     void whenAssembleRepositoriesWithBranches_givenRepoWithNullBranches_thenReturnRepoWithEmptyBranchList() throws UserNotFoundException, GitHubApiException {
         RepositoryModel repoModel = RepositoryModelMock.getRepositoryModel(false);
+
         when(restTemplate.getForEntity(anyString(), eq(RepositoryModel[].class)))
                 .thenReturn(new ResponseEntity<>(new RepositoryModel[]{repoModel}, HttpStatus.OK));
         when(gitHubBranchService.fetchRepositoryBranches(USERNAME, REPO_NAME)).thenReturn(null);
+        when(gitHubUserService.getUserByUsername(USERNAME)).thenReturn(Optional.of(new User(USERNAME)));
+
 
         List<RepositoryDTO> result = gitHubRepoService.assembleRepositoriesWithBranches(USERNAME);
 
-        assertNotNull(result.get(0).getBranches(), "Branches list should not be null");
-        assertTrue(result.get(0).getBranches().isEmpty(), "Branches list should be empty if null branches are fetched");
+        assertNotNull(result.get(0).getBranches());
+        assertTrue(result.get(0).getBranches().isEmpty());
     }
-
-
-
 }

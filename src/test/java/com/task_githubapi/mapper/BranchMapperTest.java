@@ -8,7 +8,7 @@ import org.mapstruct.factory.Mappers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BranchMapperTest {
+class BranchMapperTest {
 
     private final BranchMapper mapper = Mappers.getMapper(BranchMapper.class);
 

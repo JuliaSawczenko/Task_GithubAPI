@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(GitHubController.class)
-public class GitHubControllerTest {
+class GitHubControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

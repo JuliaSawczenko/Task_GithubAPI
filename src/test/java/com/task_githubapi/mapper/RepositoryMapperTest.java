@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RepositoryMapperTest {
+class RepositoryMapperTest {
 
     private final RepositoryMapper mapper = Mappers.getMapper(RepositoryMapper.class);
 
