@@ -7,6 +7,7 @@ import lombok.*;
 import java.util.List;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class RepositoryModel {
 
@@ -22,4 +23,7 @@ public class RepositoryModel {
     public static class Owner {
         private String login;
     }
+
+
+
 }

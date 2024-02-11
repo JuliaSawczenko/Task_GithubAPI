@@ -34,7 +34,7 @@ public class GitHubRepoService {
         this.gitHubBranchService = gitHubBranchService;
     }
 
-    public List<RepositoryModel> fetchUserRepositories(final String username) throws UserNotFoundException {
+    public List<RepositoryModel> fetchUserRepositories(final String username) throws UserNotFoundException, GitHubApiException {
         gitHubUserService.getUserByUsername(username);
         String url = buildReposUrl(username);
         ResponseEntity<RepositoryModel[]> response = restTemplate.getForEntity(url, RepositoryModel[].class);
@@ -54,15 +54,15 @@ public class GitHubRepoService {
         return repos.stream()
                 .map(repo -> {
                     List<BranchModel> branchModels = gitHubBranchService.fetchRepositoryBranches(username, repo.getName());
-                    List<BranchDTO> branchDTOs = branchModels.stream()
+                    List<BranchDTO> branchDTOs = (branchModels == null ? Collections.<BranchModel>emptyList() : branchModels).stream()
                             .map(branchMapper::branchModelToBranchDTO)
-                            .toList();
+                            .collect(Collectors.toList());
                     return repositoryMapper.repositoryModelToRepositoryDTO(repo, branchDTOs);
                 })
                 .collect(Collectors.toList());
     }
 
-    private String buildReposUrl(final String username) {
+    String buildReposUrl(final String username) {
         return "https://api.github.com/users/" + username + "/repos";
     }
 

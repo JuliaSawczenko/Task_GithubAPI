@@ -16,15 +16,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import static com.task_githubapi.mocks.MockedValues.EXCEPTION_MESSAGE;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.task_githubapi.mocks.MockedValues.USERNAME;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,7 +45,8 @@ public class GitHubControllerTest {
         @DisplayName("GET /github/user/{username}/repositories returns a list of a user's repositories")
         void getRepositoriesByUsername_success() throws Exception {
             // Given
-            List<RepositoryDTO> mockRepositoryDTOs = RepositoryDTOMock.getRepositoryDTO();
+            List<RepositoryDTO> mockRepositoryDTOs = new ArrayList<>();
+            mockRepositoryDTOs.add(RepositoryDTOMock.getRepositoryDTO());
             when((gitHubRepoService).assembleRepositoriesWithBranches(anyString())).thenReturn(mockRepositoryDTOs);
 
             ObjectMapper objectMapper = new ObjectMapper();

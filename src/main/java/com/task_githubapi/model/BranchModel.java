@@ -1,9 +1,9 @@
 package com.task_githubapi.model;
 
-import jakarta.websocket.OnOpen;
 import lombok.*;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class BranchModel {
     private String name;
