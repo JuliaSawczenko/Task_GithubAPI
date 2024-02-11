@@ -19,16 +19,15 @@ public class AppConfig {
         RestTemplate restTemplate = new RestTemplate();
 
         ClientHttpRequestInterceptor interceptor = (request, body, execution) -> {
+            request.getHeaders().set("Authorization", "Bearer " + gitHubToken);
+            request.getHeaders().set("Accept", "application/vnd.github+json");
             try {
-                request.getHeaders().set("Authorization", "Bearer " + gitHubToken);
-                request.getHeaders().set("Accept", "application/vnd.github+json");
                 return execution.execute(request, body);
             } catch (HttpClientErrorException e) {
-                logger.error("HttpClientErrorException: Status Code: {}", e.getStatusCode());
-                logger.error("HttpClientErrorException: Response Body: {}", e.getResponseBodyAsString());
+                logger.error("HttpClientErrorException: Status Code: {}", e.getStatusCode(), e);
                 throw e;
             } catch (Exception e) {
-                logger.error("Exception occurred while sending request to GitHub: ", e.getMessage());
+                logger.error("Exception occurred while sending request to GitHub: ", e);
                 throw e;
             }
         };

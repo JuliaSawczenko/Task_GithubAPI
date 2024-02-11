@@ -1,14 +1,18 @@
 package com.task_githubapi.exception;
 
 import com.task_githubapi.dto.ExceptionMessageDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
-public class GlobalHttpErrorHandler extends ResponseEntityExceptionHandler {
+@RestControllerAdvice
+public class GlobalHttpErrorHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalHttpErrorHandler.class);
+
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ExceptionMessageDTO> handleUserNotFoundException(UserNotFoundException exception) {
