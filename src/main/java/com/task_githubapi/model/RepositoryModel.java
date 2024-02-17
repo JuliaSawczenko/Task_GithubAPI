@@ -2,13 +2,10 @@ package com.task_githubapi.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
 
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
+
 public class RepositoryModel {
 
     @NotBlank
@@ -19,9 +16,24 @@ public class RepositoryModel {
     private boolean isFork;
     private List<BranchModel> branches;
 
-    @Data
+    public String getName() {
+        return name;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public boolean isFork() {
+        return isFork;
+    }
+
     public static class Owner {
         private String login;
+
+        public String getLogin() {
+            return login;
+        }
     }
 
 
