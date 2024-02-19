@@ -1,0 +1,9 @@
+[
+  {
+    "name": "repoName",
+    "owner": {
+      "login": "userLogin"
+    },
+    "fork": false
+  }
+]

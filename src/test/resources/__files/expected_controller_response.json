@@ -1,0 +1,12 @@
+[
+  {
+    "name": "repoName",
+    "ownerLogin": "userLogin",
+    "branches": [
+      {
+        "name": "main",
+        "lastCommit": "00000000000000000000000000000"
+      }
+    ]
+  }
+]

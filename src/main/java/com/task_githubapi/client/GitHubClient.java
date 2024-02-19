@@ -5,6 +5,7 @@ import com.task_githubapi.exception.UserNotFoundException;
 import com.task_githubapi.model.BranchModel;
 import com.task_githubapi.model.RepositoryModel;
 import jakarta.annotation.PreDestroy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -23,31 +24,32 @@ import java.util.stream.Collectors;
 @Component
 public class GitHubClient {
 
-    private static final String gitHubToken = System.getenv("GITHUB_JWT");
-
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     private final RestClient restClient;
 
 
-    public GitHubClient() {
+    public GitHubClient(@Value("${github.api.base.url}") String githubApiBaseUrl,
+                        @Value("${github.token}") String githubToken) {
         this.restClient = RestClient.builder()
-                .baseUrl("https://api.github.com")
-                .defaultHeader("Authorization", "Bearer " + gitHubToken)
+                .baseUrl(githubApiBaseUrl)
+                .defaultHeader("Authorization", "Bearer " + githubToken)
                 .defaultHeader("Accept", "application/vnd.github+json")
                 .build();
     }
 
 
     public List<RepositoryModel> getUserRepositories(final String username) throws UserNotFoundException, ExecutionException, InterruptedException {
+
         Callable<List<RepositoryModel>> task = () -> {
 
-            String userReposUrl = "https://api.github.com/users/{username}/repos";
+            String userReposUrl = "/users/{username}/repos";
 
             ResponseEntity<RepositoryModel[]> response = restClient.get()
                     .uri(userReposUrl, username)
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError, (request, httpResponse) -> {
+
                         if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
                             throw new UserNotFoundException(username);
                         }
@@ -57,7 +59,6 @@ public class GitHubClient {
                         throw new GitHubApiException("Server error: " + httpResponse.getStatusCode());
                     })
                     .toEntity(RepositoryModel[].class);
-
 
             RepositoryModel[] repositories = response.getBody();
 

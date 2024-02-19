@@ -1,7 +1,5 @@
 package com.task_githubapi.model;
 
-import lombok.*;
-
 
 public class BranchModel {
     private String name;
@@ -15,9 +13,12 @@ public class BranchModel {
         return commit;
     }
 
-    @Data
     public static class Commit {
         private String sha;
+
+        public String getSha() {
+            return sha;
+        }
     }
 
 }

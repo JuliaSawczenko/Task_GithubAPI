@@ -25,17 +25,17 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
-	implementation 'org.aspectj:aspectjweaver:1.9.21'
 	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
-
-	compileOnly 'org.projectlombok:lombok'
 
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'io.rest-assured:spring-web-test-client:3.2.0'
+	testImplementation 'org.wiremock:wiremock-standalone:3.4.0'
+	testImplementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+
 }
 
 tasks.named('test') {
