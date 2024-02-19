@@ -67,7 +67,7 @@ These instructions will get you a copy of the project up and running on your loc
    
    Open your favorite HTTP client (like Postman or your browser) and navigate to:
    
-   ```localhost:8080/github/user/{username}/repositories```
+   ```localhost:8080/user/{username}/repositories```
 
    Replace `{username}` with the GitHub username you're interested in.
 
